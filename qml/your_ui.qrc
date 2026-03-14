@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/your_module">
+        <file>MainView.qml</file>
+    </qresource>
+</RCC>

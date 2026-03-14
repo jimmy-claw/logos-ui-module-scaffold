@@ -1,0 +1,13 @@
+{
+    "name": "your_ui",
+    "version": "0.1.0",
+    "description": "TODO: Your UI plugin description",
+    "author": "TODO: Your Name",
+    "type": "ui",
+    "category": "general",
+    "dependencies": ["your_module"],
+    "main": {
+        "linux-amd64": "your_ui.so"
+    },
+    "manifestVersion": "0.1.0"
+}
