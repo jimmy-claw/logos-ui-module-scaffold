@@ -9,6 +9,13 @@ This scaffold produces two build targets:
 | `your_ui` | `libyour_ui.so` | IComponent UI plugin loaded by logos-app |
 | `your_module_plugin` | `your_module_plugin.so` | Headless logoscore module (optional) |
 
+## Architecture
+
+> **logos-app requires a backend module to load any UI plugin.**
+> The UI plugin declares the backend module as a dependency in .
+> logos-app spins up the backend module in a separate process, then loads the UI.
+> Even if your app has no persistent state, you still need the backend module stub.
+
 ## Quick Start
 
 ```bash
