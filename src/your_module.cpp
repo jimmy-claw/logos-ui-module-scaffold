@@ -27,6 +27,15 @@ void YourModule::initLogos(LogosAPI *logosAPIInstance) {
     Q_UNUSED(logosAPIInstance)
     qDebug() << "YourModule: initLogos called";
 #else
+    // When compiled into UI plugin (LOGOS_CORE_AVAILABLE not defined), logos_core
+    // symbols (logos_kv_get, logos_kv_free, logos_request_complete) are NOT available.
+    // Use dlsym to load them optionally:
+    //
+    // #include <dlfcn.h>
+    // void* lib = dlopen(nullptr, RTLD_NOW);
+    // auto kv_get = lib ? (bool(*)(void*,const char*,char**))dlsym(lib, "logos_kv_get") : nullptr;
+    // if (lib) dlclose(lib);
+    // if (kv_get && m_kv) kv_get(m_kv, key, &value);
     Q_UNUSED(logosAPIInstance)
 #endif
 }

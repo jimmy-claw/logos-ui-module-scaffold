@@ -194,6 +194,72 @@ void YourModule::initLogos(LogosAPI *api) {
    ```
 3. Reference it from QML: `source: "qrc:/your_module/MyNewView.qml"`
 
+## Common Gotchas
+
+Lessons learned from building real modules (yolo-ng, logos-zone-sequencer-module):
+
+### 1. Missing IComponent constructor → "undefined symbol" at dlopen
+
+`YourUIComponent` must have an explicit constructor declared and defined:
+
+```cpp
+// your_ui_component.h
+explicit YourUIComponent(QObject *parent = nullptr);
+
+// your_ui_component.cpp
+YourUIComponent::YourUIComponent(QObject *parent) : QObject(parent) {}
+```
+
+Without this, logos-app fails with an "undefined symbol" error when loading the plugin.
+
+### 2. Do NOT define `LOGOS_CORE_AVAILABLE` for the UI plugin
+
+The UI plugin (`your_ui`) is loaded by logos-app via `dlopen`. If you compile it with
+`LOGOS_CORE_AVAILABLE`, it will try to link logos_core symbols directly, causing
+"undefined symbol" at load time. The headless module (`your_module_plugin`) can safely
+define `LOGOS_CORE_AVAILABLE` because it runs inside logoscore where the symbols exist.
+
+In `CMakeLists.txt`, the UI target should link logos_core headers but **not** define
+the compile flag. Use `dlsym` at runtime instead (see below).
+
+### 3. Use `dlsym` for logos_core symbols in the UI plugin
+
+Since the UI plugin cannot link logos_core symbols directly, use `dlsym` to load them
+at runtime when they happen to be available:
+
+```cpp
+#include <dlfcn.h>
+void* lib = dlopen(nullptr, RTLD_NOW);
+auto kv_get = lib ? (bool(*)(void*,const char*,char**))dlsym(lib, "logos_kv_get") : nullptr;
+if (lib) dlclose(lib);
+if (kv_get && m_kv) kv_get(m_kv, key, &value);
+```
+
+### 4. `initLogos` must be `Q_INVOKABLE`
+
+`logos_host` dispatches `initLogos` via the Qt meta-object system. If the method is not
+marked `Q_INVOKABLE`, the call silently fails and your module never receives the LogosAPI.
+
+### 5. Do NOT shadow the C++ context property in QML
+
+Do **not** add `property var yourModule: null` in your QML root item. This shadows the
+C++ context property injected by `setContextProperty()`, and `yourModule` will always
+be `null` in QML. Just reference `yourModule` directly.
+
+### 6. `metadata.json` must include the `main` field
+
+Without the `main` → platform → `.so` mapping, LogosApp cannot auto-load your module:
+
+```json
+{
+  "main": {
+    "linux-x86_64": "your_module_plugin.so",
+    "linux-amd64": "your_module_plugin.so",
+    "linux-aarch64": "your_module_plugin.so"
+  }
+}
+```
+
 ## Nix Build
 
 ```bash

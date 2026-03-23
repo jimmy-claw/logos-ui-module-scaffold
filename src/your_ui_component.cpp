@@ -4,6 +4,8 @@
 #include <QQuickWidget>
 #include <QQmlContext>
 
+YourUIComponent::YourUIComponent(QObject *parent) : QObject(parent) {}
+
 QWidget* YourUIComponent::createWidget(LogosAPI* logosAPI) {
     auto* quickWidget = new QQuickWidget();
     quickWidget->setMinimumSize(800, 600);
