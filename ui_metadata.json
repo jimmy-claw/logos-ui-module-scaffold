@@ -5,9 +5,15 @@
     "author": "TODO: Your Name",
     "type": "ui",
     "category": "general",
-    "dependencies": ["your_module"],
+    "dependencies": [
+        "your_module"
+    ],
     "main": {
-        "linux-amd64": "your_ui.so"
+        "linux-x86_64": "your_ui.so",
+        "linux-amd64": "your_ui.so",
+        "linux-aarch64": "your_ui.so",
+        "darwin-x86_64": "your_ui.dylib",
+        "darwin-arm64": "your_ui.dylib"
     },
     "manifestVersion": "0.1.0"
 }

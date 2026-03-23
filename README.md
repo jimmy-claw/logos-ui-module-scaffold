@@ -163,3 +163,15 @@ void YourModule::initLogos(LogosAPI *api) {
 ```bash
 nix build .#ui-plugin
 ```
+
+## metadata.json — dependencies vs capabilities
+
+- `dependencies`: modules that must be loaded **before** your module (e.g. `kv_module`, `delivery_module`)
+- `capabilities`: features your module exposes to the ecosystem (usually `[]` for most modules)
+
+For logoscore headless testing, also copy your `.so` to the **modules root directory**:
+```bash
+cp ~/.local/share/Logos/LogosAppNix/modules/your_module/your_module_plugin.so \
+   ~/.local/share/Logos/LogosAppNix/modules/
+```
+logoscore scans the root directory only; LogosApp uses the subdir manifest structure.
