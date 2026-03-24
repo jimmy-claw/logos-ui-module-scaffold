@@ -42,6 +42,42 @@ make install
 cd ~/logos-workspace && nix run .#logos-app-poc
 ```
 
+## Testing
+
+The scaffold includes a UI test framework powered by [logos-qt-mcp](https://github.com/logos-co/logos-qt-mcp) — the same tool used for Logos App's own CI.
+
+### Quick start
+
+```bash
+# Build logos-qt-mcp from logos-basecamp (one-time)
+cd ~/logos-basecamp && nix build .#x86_64-linux.logosQtMcp -o result-mcp
+
+# Run tests (app must be running)
+./tests/run-tests.sh
+```
+
+### CI / headless mode
+
+```bash
+# Launches Xvfb, starts app with inspector, runs tests, cleans up
+./tests/ci-test.sh
+```
+
+### Writing tests
+
+Edit `tests/ui-tests.mjs`:
+
+```javascript
+test("my_module: verify UI loads", async (app) => {
+  await app.click("my_module");           // click sidebar item
+  await app.expectTexts(["expected text"]); // assert visible
+  await app.screenshot();                 // PNG screenshot
+});
+```
+
+Available assertions: `app.expectTexts()`, `app.expectAbsent()`
+Available actions: `app.click()`, `app.type()`, `app.findByType()`, `app.screenshot()`, `app.evaluate()`
+
 ## What to Fill In
 
 ### Required (your module won't do anything without these)

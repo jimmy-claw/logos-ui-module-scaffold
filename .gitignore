@@ -5,3 +5,5 @@ build-*/
 *.dylib
 *.dll
 .cache/
+result-mcp
+result-app
