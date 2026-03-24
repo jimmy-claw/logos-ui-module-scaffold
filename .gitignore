@@ -4,6 +4,7 @@ build-*/
 *.so
 *.dylib
 *.dll
+*.lgx
 .cache/
-result-mcp
-result-app
+result
+result-*

@@ -1,3 +1,25 @@
+LGPM           ?= lgpm
+LOGOS_DATA_DIR ?= $(HOME)/.local/share/Logos/LogosAppNix
+
+# ── lgx packaging (production) ─────────────────────────────────────────────
+
+.PHONY: build install-lgx clean \
+        cmake-build build-module build-ui-plugin \
+        setup-nix-merged install-module install install-all
+
+build:
+	nix build .#lgx-core -o result-core
+	nix build .#lgx-ui -o result-ui
+
+install-lgx: build
+	$(LGPM) install --file result-core/*.lgx --modules-dir $(LOGOS_DATA_DIR)/modules
+	$(LGPM) install --file result-ui/*.lgx --ui-plugins-dir $(LOGOS_DATA_DIR)/plugins
+
+clean:
+	rm -rf build build-module build-ui-plugin result result-*
+
+# ── Local CMake development build ──────────────────────────────────────────
+
 BUILD_DIR        ?= build
 CMAKE_FLAGS      ?= -DCMAKE_BUILD_TYPE=Debug
 
@@ -18,20 +40,9 @@ NIX_QTDECL     ?= $(shell ls -d /nix/store/*-qtdeclarative-6.9.* 2>/dev/null | g
 NIX_QTREMOBJ   ?= $(shell ls -d /nix/store/*-qtremoteobjects-6.9.* 2>/dev/null | grep -v '\.drv$$' | grep -v dev | head -1)
 NIX_QT_PREFIX  ?= $(NIX_QTBASE);$(NIX_QTDECL);$(NIX_QTREMOBJ)
 
-.PHONY: all build clean setup-nix-merged \
-        build-module install-module \
-        build-ui-plugin install install-all
-
-# ── Build (default — plugin mode) ────────────────────────────────────────────
-
-all: build
-
-build:
+cmake-build:
 	mkdir -p $(BUILD_DIR)
 	cd $(BUILD_DIR) && cmake .. $(CMAKE_FLAGS) && make -j$$(nproc)
-
-clean:
-	rm -rf $(BUILD_DIR) build-module build-ui-plugin
 
 # ── Nix merged SDK dirs ──────────────────────────────────────────────────────
 
@@ -68,7 +79,7 @@ build-module: setup-nix-merged
 install-module: build-module
 	mkdir -p ~/.local/share/Logos/LogosAppNix/modules/your_module
 	cp $(BUILD_MODULE)/your_module_plugin.so ~/.local/share/Logos/LogosAppNix/modules/your_module/
-	cp metadata.json ~/.local/share/Logos/LogosAppNix/modules/your_module/manifest.json
+	cp manifest.json ~/.local/share/Logos/LogosAppNix/modules/your_module/manifest.json
 	@echo "your_module installed to ~/.local/share/Logos/LogosAppNix/modules/your_module/"
 
 # ── UI Plugin (IComponent for logos-app) ─────────────────────────────────────
