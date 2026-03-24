@@ -16,6 +16,7 @@ class YourUIComponent : public QObject, public IComponent {
     Q_PLUGIN_METADATA(IID IComponent_iid FILE YOUR_MODULE_UI_METADATA_FILE)
 
 public:
+    explicit YourUIComponent(QObject *parent = nullptr);
     QWidget* createWidget(LogosAPI* logosAPI = nullptr) override;
     void destroyWidget(QWidget* widget) override;
 };

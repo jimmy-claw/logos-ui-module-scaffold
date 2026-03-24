@@ -1,0 +1,16 @@
+{
+  "name": "your_ui",
+  "version": "0.1.0",
+  "description": "TODO: Your UI plugin description",
+  "author": "TODO: Your Name",
+  "type": "ui",
+  "category": "general",
+  "dependencies": ["your_module"],
+  "main": {
+    "linux-x86_64": "your_ui.so",
+    "linux-aarch64": "your_ui.so",
+    "darwin-x86_64": "your_ui.dylib",
+    "darwin-aarch64": "your_ui.dylib"
+  },
+  "manifestVersion": "0.1.0"
+}

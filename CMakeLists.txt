@@ -139,7 +139,10 @@ if(BUILD_UI_PLUGIN)
             logos_core
             ${LOGOS_SDK_LIB}
         )
-        target_compile_definitions(${UI_TARGET} PRIVATE LOGOS_CORE_AVAILABLE)
+        # NOTE: Do NOT define LOGOS_CORE_AVAILABLE for the UI plugin.
+        # The UI plugin needs the headers for type info but must use dlsym
+        # for actual symbol resolution — defining LOGOS_CORE_AVAILABLE causes
+        # "undefined symbol" at dlopen time when logos-app loads the plugin.
     endif()
 
     if(APPLE)
